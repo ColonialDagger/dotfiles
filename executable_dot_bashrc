@@ -183,6 +183,3 @@ fi
 if [ -f ~/.bashrc_custom ] ;then
     source ~/.bashrc_custom
 fi
-
-{{ if eq .chezmoi.os "linux" }}
-echo test test test
