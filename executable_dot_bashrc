@@ -158,6 +158,7 @@ alias please="sudo !!"
 
 # Program Specific Aliases
 alias b2="bbb2"  # Backblaze B2
+alias chz="chezmoi"
 alias dot="chezmoi"
 alias glow="glow -s dracula"
 alias neofetch="fastfetch "  # Neofetch -> Fastfetch
