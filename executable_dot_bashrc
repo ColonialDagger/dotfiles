@@ -24,9 +24,9 @@ else
 fi
 
 # Check package manager
-command -v apt && PACKAGE_MANAGER="apt"
-command -v pacman && PACKAGE_MANAGER="pacman"
-command -v yay && PACKAGE_MANAGER="yay"
+command -v apt > /dev/null 2>&1 && PACKAGE_MANAGER="apt"
+command -v pacman > /dev/null 2>&1 && PACKAGE_MANAGER="pacman"
+command -v yay > /dev/null 2>&1 && PACKAGE_MANAGER="yay"
 
 ######################################################
 #       PS1 Management
