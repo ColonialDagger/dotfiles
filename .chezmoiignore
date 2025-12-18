@@ -1,1 +1,8 @@
+# ~/.local/share/chezmoi/.chezmoiignore
+
 README.md
+
+# Only include .is_local_machine on specified devices
+{{- if not (or (eq .chezmoi.hostname "zeus") (eq .chezmoi.hostname "artemis") (eq .chezmoi.hostname "helios")) }}
+.is_local_machine
+{{- end }}
