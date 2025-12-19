@@ -95,7 +95,8 @@ fi
 # RUNTIME
 
 # Add local apt-cacher-ng proxy
-echo 'Acquire::http::Proxy "http://192.168.50.110:3142/";' | sudo tee /etc/apt/apt.conf.d/02proxy 
+# The local DNS server (PiHole) must point directly to the IP
+echo 'Acquire::http::Proxy "http://apt.daytona.kabr.org:3142/";' | sudo tee /etc/apt/apt.conf.d/02proxy
 
 # Package management
 if $ANS_UPGRADE; then
