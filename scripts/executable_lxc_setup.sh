@@ -96,7 +96,10 @@ fi
 
 # Add local apt-cacher-ng proxy
 # The local DNS server (PiHole) must point directly to the IP
-echo 'Acquire::http::Proxy "http://apt.daytona.kabr.org:3142/";' | sudo tee /etc/apt/apt.conf.d/02proxy
+prompt "Do you want to use the local APT package proxy (apt.daytona.kabr.org)?" ANS_APT_PROXY
+if $ANS_APT_PROXY; then
+    echo 'Acquire::http::Proxy "http://apt.daytona.kabr.org:3142/";' | sudo tee /etc/apt/apt.conf.d/02proxy
+fi
 
 # Package management
 if $ANS_UPGRADE; then
