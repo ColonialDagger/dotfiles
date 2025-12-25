@@ -1,7 +1,7 @@
 #!/bin/bash
 # This setup is meant for customized setup of an LXC container for daytona.kabr.org.
 # Run this script with:
-# bash -c "$(curl -FsSL https://raw.githubusercontent.com/ColonialDagger/dotfiles/refs/heads/master/scripts/executable_lxc_setup.sh)"
+# bash -c "$(curl -fsSL https://raw.githubusercontent.com/ColonialDagger/dotfiles/refs/heads/master/scripts/executable_lxc_setup.sh)"
 
 BASHRC_URL="https://raw.githubusercontent.com/ColonialDagger/dotfiles/refs/heads/master/executable_dot_bashrc"
 
