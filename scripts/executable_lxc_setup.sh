@@ -1,6 +1,7 @@
 #!/bin/bash
 # This setup is meant for customized setup of an LXC container for daytona.kabr.org.
-# You can run this script as the root user by running the following in a linux shell:
+# Run this script with:
+# bash -c "$(curl -FsSL https://raw.githubusercontent.com/ColonialDagger/dotfiles/refs/heads/master/scripts/executable_lxc_setup.sh)"
 
 BASHRC_URL="https://raw.githubusercontent.com/ColonialDagger/dotfiles/refs/heads/master/executable_dot_bashrc"
 
