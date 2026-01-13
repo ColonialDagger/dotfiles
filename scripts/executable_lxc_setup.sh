@@ -18,7 +18,7 @@ prompt() {
 
 # Define your package list
 extra_packages=(
-    btop htop sudo fzf ncdu curl vim magic-wormhole cron nala tldr-hs
+    btop htop sudo fzf ncdu curl vim magic-wormhole cron nala tldr
 )
 
 # PROMPTS
