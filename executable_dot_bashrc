@@ -137,7 +137,7 @@ smbadd() {
     local mount_template="/etc/systemd/system/media-smb@.mount"
     local automount_template="/etc/systemd/system/media-smb@.automount"
 
-    # Create templates if missing
+    # Create mount template if missing
     if [ ! -f "$mount_template" ]; then
         sudo tee "$mount_template" >/dev/null <<'EOF'
 [Unit]
@@ -157,6 +157,7 @@ WantedBy=multi-user.target
 EOF
     fi
 
+    # Create automount template if missing
     if [ ! -f "$automount_template" ]; then
         sudo tee "$automount_template" >/dev/null <<'EOF'
 [Unit]
@@ -181,10 +182,51 @@ Environment="SERVER=${server}"
 Environment="SHARE=${share}"
 EOF
 
+    # Reload systemd and enable automount
     sudo systemctl daemon-reload
     sudo systemctl enable --now "media-smb@${share}.automount"
 
     echo "Added SMB automount: /media/${server}/${share}"
+}
+
+smbremove() {
+    local share="$1"
+
+    if [ -z "$share" ]; then
+        echo "Usage: smbremove <share>"
+        return 1
+    fi
+
+    # Read server name from override file
+    local override_dir="/etc/systemd/system/media-smb@${share}.d"
+    local vars_file="${override_dir}/vars.conf"
+
+    if [ ! -f "$vars_file" ]; then
+        echo "Share '${share}' not found."
+        return 1
+    fi
+
+    local server
+    server=$(grep '^Environment="SERVER=' "$vars_file" | sed 's/Environment="SERVER=\(.*\)"/\1/')
+
+    # Disable and stop the automount
+    sudo systemctl disable --now "media-smb@${share}.automount" 2>/dev/null
+    sudo systemctl stop "media-smb@${share}.mount" 2>/dev/null
+
+    # Remove override directory
+    sudo rm -rf "$override_dir"
+
+    # Remove share directory
+    sudo rm -rf "/media/${server}/${share}"
+
+    # Remove server directory only if empty
+    if [ -d "/media/${server}" ] && [ -z "$(ls -A "/media/${server}")" ]; then
+        sudo rmdir "/media/${server}"
+        echo "Removed empty server directory: /media/${server}"
+    fi
+
+    sudo systemctl daemon-reload
+    echo "Removed SMB automount for share '${share}'"
 }
 
 ######################################################
