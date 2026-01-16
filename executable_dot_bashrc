@@ -129,10 +129,10 @@ smbadd() {
     local server="$1"
     local share="$2"
     local creds="${3:-/etc/samba/creds}"
-    local access="${4:-private}"
+    local access="${4:-private-user}"
 
     if [ -z "$server" ] || [ -z "$share" ]; then
-        echo "Usage: smbadd <server> <share> [credsfile] [public|private]"
+        echo "Usage: smbadd <server> <share> [credsfile] [private-user|private-group|public]"
         return 1
     fi
 
@@ -149,10 +149,22 @@ smbadd() {
     local mount_path="/media/${server}/${share}"
     local group="smb-${server}-${share}"
 
-    # Create group for access control
-    sudo groupadd -f "$group"
+    # Determine mount options based on access mode
+    local mount_opts="credentials=${creds},iocharset=utf8,_netdev,nofail"
 
-    # Create mount unit with correct CIFS permissions
+    if [ "$access" = "private-user" ]; then
+        mount_opts+=",uid=$(id -u),gid=$(id -g),file_mode=0660,dir_mode=0770"
+    elif [ "$access" = "private-group" ]; then
+        sudo groupadd -f "$group"
+        mount_opts+=",gid=${group},file_mode=0660,dir_mode=0770"
+    elif [ "$access" = "public" ]; then
+        mount_opts+=",file_mode=0644,dir_mode=0755"
+    else
+        echo "Invalid access mode. Use: private-user, private-group, or public"
+        return 1
+    fi
+
+    # Create mount unit
     sudo tee "$mount_unit" >/dev/null <<EOF
 [Unit]
 Description=SMB Mount for ${server}/${share}
@@ -163,7 +175,7 @@ Wants=network-online.target
 What=//${server}/${share}
 Where=${mount_path}
 Type=cifs
-Options=credentials=${creds},iocharset=utf8,_netdev,nofail,gid=${group},file_mode=0660,dir_mode=0770
+Options=${mount_opts}
 DirectoryMode=0755
 
 [Install]
@@ -192,21 +204,28 @@ EOF
     sudo systemctl daemon-reload
     sudo systemctl enable --now "${unit}.automount"
 
-    # Access control
+    # Local directory permissions
     sudo mkdir -p "/media/${server}"
 
-    if [ "$access" = "public" ]; then
-        sudo chmod 755 "/media/${server}"
-        sudo chmod 755 "$mount_path"
-        sudo chown root:root "$mount_path"
-        echo "Share is public: any user may access ${mount_path}"
-    else
-        sudo chown root:"$group" "$mount_path"
-        sudo chmod 770 "$mount_path"
-        sudo usermod -aG "$group" "$USER"
-        echo "Share is private: only members of group $group may access ${mount_path}"
-        echo "You have been added to group $group"
-    fi
+    case "$access" in
+        private-user)
+            sudo chown "$(id -u):$(id -g)" "$mount_path"
+            sudo chmod 770 "$mount_path"
+            echo "Share mounted as your user: $(id -un)"
+            ;;
+        private-group)
+            sudo chown root:"$group" "$mount_path"
+            sudo chmod 770 "$mount_path"
+            sudo usermod -aG "$group" "$USER"
+            echo "Share restricted to group: $group"
+            echo "You have been added to group $group"
+            ;;
+        public)
+            sudo chown root:root "$mount_path"
+            sudo chmod 755 "$mount_path"
+            echo "Share is public (world-readable)"
+            ;;
+    esac
 
     echo "Added SMB automount: ${mount_path}"
 }
