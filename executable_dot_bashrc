@@ -172,16 +172,23 @@ WantedBy=multi-user.target
 EOF
     fi
 
-    # Reload systemd so new templates are recognized
+    # Reload systemd so templates are recognized
     sudo systemctl daemon-reload
 
-    # Escape slash for systemd instance naming
-    local instance="${server}\\x2f${share}"
+    # Escape characters for systemd instance names
+    # systemd requires:
+    #   . → \x2e
+    #   / → \x2f
+    local esc_server="${server//./\\x2e}"
+    local esc_share="${share//\//\\x2f}"
+
+    # Combine into instance name
+    local instance="${esc_server}\\x2f${esc_share}"
 
     # Enable and start the automount
     sudo systemctl enable --now "media-smb@${instance}.automount"
 
-    echo "SMB automount added: /media/${server}/${share}"
+    echo "Added SMB automount: /media/${server}/${share}"
 }
 
 ######################################################
