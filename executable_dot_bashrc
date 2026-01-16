@@ -125,6 +125,20 @@ mkd () {
         cd "$@" || exit
 }
 
+mountsmb() {
+    local server="$1"
+    local share="$2"
+
+    if [ -z "$server" ] || [ -z "$share" ]; then
+        echo "Usage: mountsmb <server> <share>"
+        return 1
+    fi
+
+    # Escape the slash for systemd instance naming
+    local instance="${server}\\x2f${share}"
+
+    sudo systemctl enable --now "media-smb@${instance}.automount"
+}
 
 ######################################################
 #       Aliases
