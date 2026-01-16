@@ -136,6 +136,15 @@ smbadd() {
         return 1
     fi
 
+    # Normalize credentials path to absolute
+    # Expand ~
+    creds="${creds/#\~/$HOME}"
+
+    # If not absolute, prefix with $PWD
+    if [[ "$creds" != /* ]]; then
+        creds="$PWD/$creds"
+    fi
+
     local unit="media-${server}-${share}"
     local mount_unit="/etc/systemd/system/${unit}.mount"
     local automount_unit="/etc/systemd/system/${unit}.automount"
