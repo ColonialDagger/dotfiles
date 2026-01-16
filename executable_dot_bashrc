@@ -125,19 +125,63 @@ mkd () {
         cd "$@" || exit
 }
 
-mountsmb() {
+smbadd() {
     local server="$1"
     local share="$2"
 
     if [ -z "$server" ] || [ -z "$share" ]; then
-        echo "Usage: mountsmb <server> <share>"
+        echo "Usage: smbadd <server> <share>"
         return 1
     fi
 
-    # Escape the slash for systemd instance naming
+    # Template paths
+    local mount_template="/etc/systemd/system/media-smb@.mount"
+    local automount_template="/etc/systemd/system/media-smb@.automount"
+
+    # Create mount template if missing
+    if [ ! -f "$mount_template" ]; then
+        sudo tee "$mount_template" >/dev/null <<'EOF'
+[Unit]
+Description=SMB Mount %I
+After=network-online.target
+Wants=network-online.target
+
+[Mount]
+What=//%I
+Where=/media/%I
+Type=cifs
+Options=credentials=/etc/samba/creds,iocharset=utf8,_netdev,nofail
+DirectoryMode=0755
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    fi
+
+    # Create automount template if missing
+    if [ ! -f "$automount_template" ]; then
+        sudo tee "$automount_template" >/dev/null <<'EOF'
+[Unit]
+Description=Automount SMB Share %I
+
+[Automount]
+Where=/media/%I
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    fi
+
+    # Reload systemd so new templates are recognized
+    sudo systemctl daemon-reload
+
+    # Escape slash for systemd instance naming
     local instance="${server}\\x2f${share}"
 
+    # Enable and start the automount
     sudo systemctl enable --now "media-smb@${instance}.automount"
+
+    echo "SMB automount added: /media/${server}/${share}"
 }
 
 ######################################################
