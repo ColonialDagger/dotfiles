@@ -134,11 +134,10 @@ smbadd() {
         return 1
     fi
 
-    # Template paths
     local mount_template="/etc/systemd/system/media-smb@.mount"
     local automount_template="/etc/systemd/system/media-smb@.automount"
 
-    # Create mount template if missing
+    # Create templates if missing
     if [ ! -f "$mount_template" ]; then
         sudo tee "$mount_template" >/dev/null <<'EOF'
 [Unit]
@@ -147,8 +146,8 @@ After=network-online.target
 Wants=network-online.target
 
 [Mount]
-What=//%I
-Where=/media/%I
+What=//${SERVER}/${SHARE}
+Where=/media/${SERVER}/${SHARE}
 Type=cifs
 Options=credentials=/etc/samba/creds,iocharset=utf8,_netdev,nofail
 DirectoryMode=0755
@@ -158,35 +157,32 @@ WantedBy=multi-user.target
 EOF
     fi
 
-    # Create automount template if missing
     if [ ! -f "$automount_template" ]; then
         sudo tee "$automount_template" >/dev/null <<'EOF'
 [Unit]
 Description=Automount SMB Share %I
 
 [Automount]
-Where=/media/%I
+Where=/media/${SERVER}/${SHARE}
 
 [Install]
 WantedBy=multi-user.target
 EOF
     fi
 
-    # Reload systemd so templates are recognized
+    # Create override directory for this instance
+    local override_dir="/etc/systemd/system/media-smb@${share}.d"
+    sudo mkdir -p "$override_dir"
+
+    # Write server/share variables
+    sudo tee "${override_dir}/vars.conf" >/dev/null <<EOF
+[Mount]
+Environment="SERVER=${server}"
+Environment="SHARE=${share}"
+EOF
+
     sudo systemctl daemon-reload
-
-    # Escape characters for systemd instance names
-    # systemd requires:
-    #   . → \x2e
-    #   / → \x2f
-    local esc_server="${server//./\\x2e}"
-    local esc_share="${share//\//\\x2f}"
-
-    # Combine into instance name
-    local instance="${esc_server}\\x2f${esc_share}"
-
-    # Enable and start the automount
-    sudo systemctl enable --now "media-smb@${instance}.automount"
+    sudo systemctl enable --now "media-smb@${share}.automount"
 
     echo "Added SMB automount: /media/${server}/${share}"
 }
