@@ -219,6 +219,8 @@ EOF
 }
 
 smbremove() {
+    exit ## FIX THIS FUNC
+
     local server="$1"
     local share="$2"
 
