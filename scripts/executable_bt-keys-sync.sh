@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # Require a Windows mount point argument
 if [ -z "$1" ]; then
