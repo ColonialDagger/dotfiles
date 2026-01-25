@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 sudo pacman -S --noconfirm sbctl
 
