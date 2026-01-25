@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This is a script that helps create some better progress/spinner TUI. Pulled mostly as-is from the Proxmox VE Helper Scripts.
 
