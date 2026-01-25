@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo "Raspberry Pi aa-proxy/aa-proxy-rs Flashing Utility"
 
