@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This setup is meant for customized setup of an LXC container for daytona.kabr.org.
 # Run this script with:
 # bash -c "$(curl -fsSL https://raw.githubusercontent.com/ColonialDagger/dotfiles/refs/heads/master/scripts/executable_lxc_setup.sh)"
