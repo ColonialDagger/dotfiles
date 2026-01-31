@@ -7,12 +7,16 @@ echo "Grabbing latest version..."
 VERSION=$(wget -qO- https://github.com/aa-proxy/aa-proxy-rs/releases/latest | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+' | head -n 1)
 
 # Define available images
-IMAGES=(
-    "raspberrypi0w-sdcard.img.xz"
-    "raspberrypi3a-sdcard.img.xz"
-    "raspberrypi4-sdcard.img.xz"
-    "raspberrypizero2w-sdcard.img.xz"
-)
+echo "Fetching available images..."
+IMAGES=($(curl -s https://api.github.com/repos/aa-proxy/aa-proxy-rs/releases/latest \
+    | grep '"name"' \
+    | grep '.img.xz"' \
+    | cut -d '"' -f 4))
+
+if [ ${#IMAGES[@]} -eq 0 ]; then
+    echo "No image files found in the latest release."
+    exit 1
+fi
 
 # Display choices
 echo "Available images:"
