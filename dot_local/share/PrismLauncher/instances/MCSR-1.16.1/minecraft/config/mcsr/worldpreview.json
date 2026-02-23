@@ -1,0 +1,8 @@
+{
+  ".apiVersion": "2.2+1.16-1.16.1",
+  ".modVersion": "6.3.1+1.16-1.16.1",
+  ".dataVersion": 0,
+  "chunkDistance": 16,
+  "instantRenderDistance": 3,
+  "dataLimit": 100
+}
