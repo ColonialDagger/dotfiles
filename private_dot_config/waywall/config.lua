@@ -30,9 +30,9 @@ return {
 
     -- ==== KEYBINDS ====
     -- resolution changes
-    thin = { key = "Left", f3_safe = false, ingame_only = true },
-    wide = { key = "Right", f3_safe = true, ingame_only = true },
-    tall = { key = "Down", f3_safe = false, ingame_only = false },
+    thin = { key = "Forward", f3_safe = false, ingame_only = true },
+    wide = { key = "Back", f3_safe = true, ingame_only = true },
+    tall = { key = "F13", f3_safe = false, ingame_only = false },
 
     -- startup actions
     toggle_fullscreen_key = "Alt-Shift-O",
