@@ -5,7 +5,7 @@ return {
     -- ==== LOOKS ====
     bg_col = "#000000",
     toggle_bg_picture = false,
-    bg_path = "/home/bitwise/overlay1.png".
+    bg_path = "/home/bitwise/overlay1.png",
     text_col = "#FFFFFF",
     pie_chart_1 = "#EC6E4E",
     pie_chart_2 = "#46CE66",
