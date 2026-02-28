@@ -6,3 +6,7 @@ README.md
 {{- if not (or (eq .chezmoi.hostname "zeus") (eq .chezmoi.hostname "artemis") (eq .chezmoi.hostname "helios")) }}
 .is_local_machine
 {{- end }}
+
+# Waywall overlay images
+~/.config/waywall/resources/*.png
+~/.config/waywall/resources/*.pdn
