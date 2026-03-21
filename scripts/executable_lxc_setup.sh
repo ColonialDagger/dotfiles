@@ -163,9 +163,9 @@ fi
 
 if $ANS_NVIDIA; then
     echo ""
-    wget https://us.download.nvidia.com/XFree86/Linux-x86_64/580.126.18/NVIDIA-Linux-x86_64-580.126.18.run -O /tmp/NVIDIA-Linux-x86_64-580.126.18.run
-    chmod +x /tmp/NVIDIA-Linux-x86_64-580.126.18.run
-    /tmp/NVIDIA-Linux-x86_64-580.126.18.run --no-kernel-module -no-questions --silent
+    wget https://us.download.nvidia.com/XFree86/Linux-x86_64/580.142/NVIDIA-Linux-x86_64-580.142.run -O /tmp/NVIDIA-Linux-x86_64-580.142.run
+    chmod +x /tmp/NVIDIA-Linux-x86_64-580.142.run
+    /tmp/NVIDIA-Linux-x86_64-580.142.run --no-kernel-module -no-questions --silent
     echo "Add the following data to /etc/pve/lxc/<id>.conf on the Proxmox host:"
     echo ""
     echo "# Allow cgroup access"
