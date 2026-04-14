@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # Get versions
-upstream_version=$(curl https://ksa-linux.ahwoo.com/ | grep class=\"filename\" | grep -oP 'v\K[0-9.]+(?=\.tar\.gz)')
-aur_version=$(curl https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=kittenspaceagency-bin | grep -oP '(?<=pkgver=)[0-9.]+')
+upstream_version=$(curl -fsSL https://ksa-linux.ahwoo.com/ | grep class=\"filename\" | grep -oP 'v\K[0-9.]+(?=\.tar\.gz)')
+aur_version=$(curl -fsSL https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=kittenspaceagency-bin | grep -oP '(?<=pkgver=)[0-9.]+')
 
 if [[ "$aur_version" != "$upstream_version" ]]; then
 
