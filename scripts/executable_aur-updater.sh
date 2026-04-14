@@ -114,6 +114,8 @@ update_kittenspaceagency() {
     sed -i "s/^pkgver=.*/pkgver=${upstream}/" "$dir/PKGBUILD"
     (cd "$dir" && makepkg --printsrcinfo > .SRCINFO)
 
+    updpkgsums
+
     git -C "$dir" add PKGBUILD .SRCINFO
 
     finalize_and_push "$pkg"
