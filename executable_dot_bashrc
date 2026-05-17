@@ -298,6 +298,7 @@ alias yt="yt-dlp"
 alias starwars="telnet towel.blinkenlights.nl"
 
 # Wake homelab servers via Wake on LAN
+alias wakeonlan-zeus-eos="wakeonlan 74:56:3C:42:A4:F3"
 alias wakeonlan-pve1="wakeonlan EC:8E:B5:D3:84:B6 --ip 192.168.8.2"
 alias wakeonlan-pve2="wakeonlan E0:3F:49:B4:4C:41 --ip 192.168.8.3"
 
