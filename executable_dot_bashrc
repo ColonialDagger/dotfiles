@@ -313,6 +313,13 @@ if command -v fastfetch >/dev/null 2>&1; then
 fi
 
 ######################################################
+#	LOAD .bashrc_secrets
+######################################################
+if [ -f ~/.bashrc_secrets ] ;then
+    source ~/.bashrc_secrets
+fi
+
+######################################################
 #       LOAD CUSTOM .bashrc_custom if exists
 ######################################################
 if [ -f ~/.bashrc_custom ] ;then
