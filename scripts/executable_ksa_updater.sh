@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Get versions
-upstream_version=$(curl -fsSL https://ksa-linux.ahwoo.com/ | grep class=\"filename\" | grep -oP 'v\K[0-9.]+(?=\.tar\.gz)')
+upstream_version=$(curl -fsSL https://ksa-archive.net/assets/index-C4qpkk_n.js | grep -oP 'setup_ksa_v\K[0-9.]+(?=\.tar\.gz)' | tac | head -n 1)
 aur_version=$(curl -fsSL https://aur.archlinux.org/packages/kittenspaceagency-bin | grep "Package Details:" | grep -oP '(?<=kittenspaceagency-bin )[0-9.]+')
 
 if [[ "$aur_version" != "$upstream_version" ]]; then
