@@ -16,7 +16,7 @@ if [[ "$aur_version" != "$upstream_version" ]]; then
 	echo "AUR:      $aur_version"
 	echo
 
-        cd /tmp
+        cd ~/.tmp
         git clone ssh://aur@aur.archlinux.org/kittenspaceagency-bin.git
         cd kittenspaceagency-bin
 
@@ -30,4 +30,4 @@ if [[ "$aur_version" != "$upstream_version" ]]; then
 
 fi
 
-rm -rf /tmp/kittenspaceagency-bin
+rm -rf ~/.tmp/kittenspaceagency-bin
