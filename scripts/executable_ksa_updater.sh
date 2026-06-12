@@ -28,6 +28,6 @@ if [[ "$aur_version" != "$upstream_version" ]]; then
         git commit -m "Updated version."
         git push
 
-        rm -rf /tmp/kittenspaceagency-bin
-
 fi
+
+rm -rf /tmp/kittenspaceagency-bin
