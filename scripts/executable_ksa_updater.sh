@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # Get versions
-jsfile=$(curl -fsSL https://ksa-archive.net \
+jsfile=$(curl -fsSL -H "Cache-Control: no-cache" https://ksa-archive.net \
   | grep -oP 'src="/assets/\Kindex-[^"]+')
-upstream_version=$(curl -fsSL "https://ksa-archive.net/assets/$jsfile" \
+upstream_version=$(curl -fsSL -H "Cache-Control: no-cache" "https://ksa-archive.net/assets/$jsfile" \
   | grep -oP 'setup_ksa_v\K[0-9.]+(?=\.tar\.gz)' \
   | tac \
   | head -n 1)
