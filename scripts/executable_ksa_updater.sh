@@ -9,12 +9,17 @@ upstream_version=$(curl -fsSL -H "Cache-Control: no-cache" "https://ksa-archive.
   | head -n 1)
 aur_version=$(curl -fsSL https://aur.archlinux.org/packages/kittenspaceagency-bin | grep "Package Details:" | grep -oP '(?<=kittenspaceagency-bin )[0-9.]+')
 
-if [[ "$aur_version" != "$upstream_version" ]]; then
+if [[ "$aur_version" == "$upstream_version" ]]; then
+	curl "$KSA_HC"  # Send success signal
+	exit
+elif [[ "$aur_version" != "$upstream_version" ]]; then
 	
 	echo "New version detected!"
 	echo "Upstream: $upstream_version"
 	echo "AUR:      $aur_version"
 	echo
+
+	curl "$KSA_HC/start"  # Send start signal
 
 	mkdir -p ~/.tmp
         cd ~/.tmp
@@ -30,6 +35,13 @@ if [[ "$aur_version" != "$upstream_version" ]]; then
         git commit -m "Updated version."
         git push
 
+	curl "$KSA_HC"  # Send success signal
+
+	rm -rf ~/.tmp/kittenspaceagency-bin
+	exit
+
 fi
 
 rm -rf ~/.tmp/kittenspaceagency-bin
+
+curl "$KSA_HC/fail"  # Send failure signal
