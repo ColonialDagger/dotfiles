@@ -45,7 +45,7 @@
 theme = Breeze
 
 background = #232627
-background-opacity = 0.75
+background-opacity = 0.9
 background-blur = true
 
 foreground = #eff0f1
