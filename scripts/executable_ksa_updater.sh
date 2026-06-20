@@ -9,6 +9,9 @@ upstream_version=$(curl -fsSL -H "Cache-Control: no-cache" "https://ksa-archive.
   | head -n 1)
 aur_version=$(curl -fsSL https://aur.archlinux.org/packages/kittenspaceagency-bin | grep "Package Details:" | grep -oP '(?<=kittenspaceagency-bin )[0-9.]+')
 
+# Healthcheck URL
+KSA_HC="https://hc-ping.com/869beb5e-c8ce-4ac1-ad64-5c6c869fb44c"
+
 # Delete any old version
 # This is mostly just in case a directory is left behind for whatever reason
 rm -rf ~/.tmp/kittenspaceagency-bin
@@ -39,7 +42,7 @@ elif [[ "$aur_version" != "$upstream_version" ]]; then
         git commit -m "Updated version."
         git push
 
-	curl "$KSA_HC"  # Send success signal
+	curl --data-raw "Updated version $aur_version -> $upstream_version" "$KSA_HC"  # Send success signal
 
 	rm -rf ~/.tmp/kittenspaceagency-bin
 	exit
