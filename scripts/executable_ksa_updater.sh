@@ -9,6 +9,10 @@ upstream_version=$(curl -fsSL -H "Cache-Control: no-cache" "https://ksa-archive.
   | head -n 1)
 aur_version=$(curl -fsSL https://aur.archlinux.org/packages/kittenspaceagency-bin | grep "Package Details:" | grep -oP '(?<=kittenspaceagency-bin )[0-9.]+')
 
+# Delete any old version
+# This is mostly just in case a directory is left behind for whatever reason
+rm -rf ~/.tmp/kittenspaceagency-bin
+
 if [[ "$aur_version" == "$upstream_version" ]]; then
 	curl "$KSA_HC"  # Send success signal
 	exit
