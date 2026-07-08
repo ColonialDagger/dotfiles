@@ -17,7 +17,7 @@ KSA_HC="https://hc-ping.com/869beb5e-c8ce-4ac1-ad64-5c6c869fb44c"
 rm -rf ~/.tmp/kittenspaceagency-bin
 
 if [[ "$aur_version" == "$upstream_version" ]]; then
-	curl -fsSL "$KSA_HC"  # Send success signal
+	curl -fsSL "$KSA_HC" > /dev/null  # Send success signal
 	exit
 elif [[ "$aur_version" != "$upstream_version" ]]; then
 	
@@ -42,7 +42,10 @@ elif [[ "$aur_version" != "$upstream_version" ]]; then
         git commit -m "Updated version."
         git push
 
-	curl -fsSL --data-raw "Updated version $aur_version -> $upstream_version" "$KSA_HC"  # Send success signal
+	msg="Updated version $aur_version -> $upstream_version"
+
+	echo "$msg"
+	curl -fsSL --data-raw "$msg" "$KSA_HC"  # Send success signal
 
 	rm -rf ~/.tmp/kittenspaceagency-bin
 	exit
@@ -51,4 +54,5 @@ fi
 
 rm -rf ~/.tmp/kittenspaceagency-bin
 
+echo "Update failed!"
 curl -fsSL "$KSA_HC/fail"  # Send failure signal
