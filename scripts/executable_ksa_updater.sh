@@ -17,7 +17,7 @@ KSA_HC="https://hc-ping.com/869beb5e-c8ce-4ac1-ad64-5c6c869fb44c"
 rm -rf ~/.tmp/kittenspaceagency-bin
 
 if [[ "$aur_version" == "$upstream_version" ]]; then
-	curl -fsSL "$KSA_HC" > /dev/null  # Send success signal
+	curl -fsSL "$KSA_HC" >> /dev/null  # Send success signal
 	exit
 elif [[ "$aur_version" != "$upstream_version" ]]; then
 	
