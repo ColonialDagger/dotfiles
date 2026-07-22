@@ -39,7 +39,7 @@ elif [[ "$aur_version" != "$upstream_version" ]]; then
         makepkg --printsrcinfo > .SRCINFO
 
         git add PKGBUILD .SRCINFO
-        git commit -m "Updated version."
+	git commit -m "Updated version. (Automatic)"
         git push
 
 	msg="Updated version $aur_version -> $upstream_version"
