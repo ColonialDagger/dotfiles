@@ -1,58 +1,82 @@
 #!/usr/bin/env bash
 
-# Get versions
-jsfile=$(curl -fsSL -H "Cache-Control: no-cache" https://ksa-archive.net \
-  | grep -oP 'src="/assets/\Kindex-[^"]+')
-upstream_version=$(curl -fsSL -H "Cache-Control: no-cache" "https://ksa-archive.net/assets/$jsfile" \
-  | grep -oP 'setup_ksa_v\K[0-9.]+(?=\.tar\.gz)' \
-  | tac \
-  | head -n 1)
-aur_version=$(curl -fsSL https://aur.archlinux.org/packages/kittenspaceagency-bin | grep "Package Details:" | grep -oP '(?<=kittenspaceagency-bin )[0-9.]+')
+AUR_PKGNAME="kittenspaceagency-bin"
+HEALTHCHECK_URL="https://hc-ping.com/869beb5e-c8ce-4ac1-ad64-5c6c869fb44c"
 
-# Healthcheck URL
-KSA_HC="https://hc-ping.com/869beb5e-c8ce-4ac1-ad64-5c6c869fb44c"
+AUR_VERSION=""
+LIVE_VERSION=""
 
-# Delete any old version
-# This is mostly just in case a directory is left behind for whatever reason
-rm -rf ~/.tmp/kittenspaceagency-bin
+get_aur_version() {
+    AUR_VERSION=$(curl -fsSL "https://aur.archlinux.org/packages/$AUR_PKGNAME" \
+        | grep "Package Details:" \
+        | grep -oP "(?<=$AUR_PKGNAME )[0-9.]+")
+}
 
-if [[ "$aur_version" == "$upstream_version" ]]; then
-	curl -fsSL "$KSA_HC" >> /dev/null  # Send success signal
-	exit
-elif [[ "$aur_version" != "$upstream_version" ]]; then
-	
-	echo "New version detected!"
-	echo "Upstream: $upstream_version"
-	echo "AUR:      $aur_version"
-	echo
+get_live_version() {
+    jsfile=$(curl -fsSL -H "Cache-Control: no-cache" https://ksa-archive.net \
+        | grep -oP 'src="/assets/\Kindex-[^"]+')
 
-	curl -fsSL "$KSA_HC/start"  # Send start signal
+    LIVE_VERSION=$(curl -fsSL -H "Cache-Control: no-cache" "https://ksa-archive.net/assets/$jsfile" \
+        | grep -oP 'setup_ksa_v\K[0-9.]+(?=\.tar\.gz)' \
+        | tail -n 1)
 
-	mkdir -p ~/.tmp
-        cd ~/.tmp
+    echo $LIVE_VERSION
+}
 
-        git clone ssh://aur@aur.archlinux.org/kittenspaceagency-bin.git
-        cd kittenspaceagency-bin
+do_update() {
+    mkdir -p "$HOME/.tmp"
+    tmpdir=$(mktemp -d --tmpdir="$HOME/.tmp")
+    cd "$tmpdir"
 
-        sed -i "s/^pkgver=.*/pkgver=${upstream_version}/" PKGBUILD
-        updpkgsums
-        makepkg --printsrcinfo > .SRCINFO
+    git clone "ssh://aur@aur.archlinux.org/$AUR_PKGNAME.git"
+    cd "$AUR_PKGNAME"
 
-        git add PKGBUILD .SRCINFO
-	git commit -m "Updated version. (Automatic)"
-        git push
+    sed -i "s/^pkgver=.*/pkgver=${LIVE_VERSION}/" PKGBUILD
+    updpkgsums
+    makepkg --printsrcinfo > .SRCINFO
 
-	msg="Updated version $aur_version -> $upstream_version"
+    git add PKGBUILD .SRCINFO
+    git commit -m "Update to version $LIVE_VERSION (automatic)"
+    git push
 
-	echo "$msg"
-	curl -fsSL --data-raw "$msg" "$KSA_HC"  # Send success signal
+    echo "Update complete!"
+}
 
-	rm -rf ~/.tmp/kittenspaceagency-bin
-	exit
+send_healthcheck() {
+    local status="$1"
+    curl -fsSL "$HEALTHCHECK_URL/$status" >/dev/null
+}
 
-fi
+main() {
+    get_aur_version
+    get_live_version
 
-rm -rf ~/.tmp/kittenspaceagency-bin
+    if [[ -z "$AUR_VERSION" ]]; then
+	echo "Failed to fetch AUR version!"
+	send_healthcheck "fail"
+	exit 1
+    elif [[ -z "$LIVE_VERSION" ]]; then
+	echo "Failed to fetch live version!"
+	send_healthcheck "fail"
+	exit 1
+    fi
 
-echo "Update failed!"
-curl -fsSL "$KSA_HC/fail"  # Send failure signal
+    if [[ "$AUR_VERSION" == "$LIVE_VERSION" ]]; then
+        echo "No update needed."
+        send_healthcheck "0"
+        exit 0
+    fi
+
+    echo
+    echo "New version detected!"
+    echo "Upstream: $LIVE_VERSION"
+    echo "AUR:      $AUR_VERSION"
+    echo
+
+    send_healthcheck "start"
+    do_update
+    send_healthcheck "0"
+}
+
+main
+
