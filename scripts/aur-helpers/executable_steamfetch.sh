@@ -19,22 +19,18 @@ get_live_version() {
 }
 
 do_update() {
-    mkdir -p ~/.tmp
-    tmpdir=$(mktemp -d --tmpdir=~/.tmp)
+    mkdir -p "$HOME/.tmp"
+    tmpdir=$(mktemp -d --tmpdir="$HOME/.tmp")
     cd "$tmpdir"
 
     git clone "ssh://aur@aur.archlinux.org/$AUR_PKGNAME.git"
     cd "$AUR_PKGNAME"
 
-    # UPDATE METHOD GOES BELOW HERE
-
     sed -i "s/^pkgver=.*/pkgver=${LIVE_VERSION}/" PKGBUILD
     updpkgsums
     makepkg --printsrcinfo > .SRCINFO
 
-    # UPDATE METHOD ENDS HERE
-
-    git add PKGBUILD .SRCINFO  # ADD MODIFIED FILES HERE
+    git add PKGBUILD .SRCINFO
     git commit -m "Update to version $LIVE_VERSION (automatic)"
     git push
 
