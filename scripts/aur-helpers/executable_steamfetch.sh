@@ -19,6 +19,7 @@ get_live_version() {
 }
 
 do_update() {
+    mkdir -p ~/.tmp
     tmpdir=$(mktemp -d --tmpdir=~/.tmp)
     cd "$tmpdir"
 
