@@ -49,7 +49,7 @@ main() {
 
     if [[ "$AUR_VERSION" == "$LIVE_VERSION" ]]; then
         echo "No update needed."
-        send_healthcheck "success"
+        send_healthcheck "0"
         exit 0
     fi
 
@@ -61,7 +61,7 @@ main() {
 
     send_healthcheck "start"
     do_update
-    send_healthcheck "success"
+    send_healthcheck "0"
 }
 
 main
