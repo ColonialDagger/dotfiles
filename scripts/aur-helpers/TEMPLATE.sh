@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# This file serves as a template to update AUR packages automatically.
+# Make sure to complete all TODO tasks to ensure functionality.
+#
+# Note: An SSH key-pair is required. This script only works if the key is password-less.
+
 AUR_PKGNAME=""  # TODO: Add your package name here
 HEALTHCHECK_URL=""  # TODO: Add your healthchecks.io URL here
 
