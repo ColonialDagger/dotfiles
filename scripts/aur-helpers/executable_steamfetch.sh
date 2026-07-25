@@ -33,7 +33,7 @@ do_update() {
 
     git add PKGBUILD .SRCINFO
     git commit -m "Update to version $LIVE_VERSION (automatic)"
-    #git push
+    git push
 
     echo "Update complete!"
 }
