@@ -32,7 +32,9 @@ do_update() {
     updpkgsums
     makepkg --printsrcinfo > .SRCINFO
 
-    git add PKGBUILD .SRCINFO
+    # UPDATE METHOD ENDS HERE
+
+    git add PKGBUILD .SRCINFO  # ADD MODIFIED FILES HERE
     git commit -m "Update to version $LIVE_VERSION (automatic)"
     git push
 
@@ -47,6 +49,16 @@ send_healthcheck() {
 main() {
     get_aur_version
     get_live_version
+
+    if [[ -z "$AUR_VERSION" ]]; then
+	echo "Failed to fetch AUR version!"
+	send_healthcheck "fail"
+	exit 1
+    elif [[ -z "$LIVE_VERSION" ]]; then
+	echo "Failed to fetch live version!"
+	send_healthcheck "fail"
+	exit 1
+    fi
 
     if [[ "$AUR_VERSION" == "$LIVE_VERSION" ]]; then
         echo "No update needed."
