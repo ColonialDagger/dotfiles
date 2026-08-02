@@ -26,6 +26,7 @@ get_live_version() {
 do_update() {
     mkdir -p "$HOME/.tmp"
     tmpdir=$(mktemp -d --tmpdir="$HOME/.tmp")
+    trap 'rm -rf "$tmpdir"' EXIT
     cd "$tmpdir"
 
     git clone "ssh://aur@aur.archlinux.org/$AUR_PKGNAME.git"
