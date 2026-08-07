@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Deterministic LXC setup for daytona.kabr.org
+# Run this with:
+# bash -c "$(curl -fsSL https://raw.githubusercontent.com/ColonialDagger/dotfiles/refs/heads/master/scripts/executable_lxc_setup.sh)"
 
 BASHRC_URL="https://raw.githubusercontent.com/ColonialDagger/dotfiles/refs/heads/master/executable_dot_bashrc"
 
@@ -44,11 +45,7 @@ if $UPGRADE_PACKAGES; then
     apt upgrade -y
 fi
 
-if $INSTALL_EXTRA_PACKAGES; then
-    apt install -y "${extra_packages[@]}"
-fi
-
-# --- FASTFETCH CONDITIONAL INSTALL ---
+# --- FASTFETCH CONDITIONAL ADD ---
 if $INSTALL_FASTFETCH; then
     UBUNTU_VERSION=$(lsb_release -rs 2>/dev/null || echo "")
     DISTRO=$(lsb_release -is 2>/dev/null || echo "")
@@ -56,23 +53,27 @@ if $INSTALL_FASTFETCH; then
     if [[ "$DISTRO" == "Ubuntu" ]]; then
         # Ubuntu 25.04+ → fastfetch available normally
         if dpkg --compare-versions "$UBUNTU_VERSION" ge "25.04"; then
-            apt install -y fastfetch
+            extra_packages+=("fastfetch")
 
         # Ubuntu 22.04 → 24.10 → use PPA
         elif dpkg --compare-versions "$UBUNTU_VERSION" ge "22.04"; then
             apt install -y software-properties-common
             add-apt-repository -y ppa:zhangsongcui3371/fastfetch
             apt update
-            apt install -y fastfetch
+            extra_packages+=("fastfetch")
         fi
 
     elif [[ "$DISTRO" == "Debian" ]]; then
-        # Debian 13+ → fastfetch available normally
         DEBIAN_VERSION=$(lsb_release -rs 2>/dev/null || echo "")
         if dpkg --compare-versions "$DEBIAN_VERSION" ge "13"; then
-            apt install -y fastfetch
+            extra_packages+=("fastfetch")
         fi
     fi
+fi
+
+# --- INSTALL ALL EXTRA PACKAGES IN ONE GO ---
+if $INSTALL_EXTRA_PACKAGES; then
+    apt install -y "${extra_packages[@]}"
 fi
 
 # --- SSH HARDENING ---
@@ -95,7 +96,7 @@ fi
 # --- BITWISE USER SETUP ---
 if $SETUP_BITWISE_USER; then
     if ! id bitwise &>/dev/null; then
-        adduser --gecos "" bitwise
+        adduser --gecos "" --disabled-password bitwise
         usermod -aG sudo bitwise
 
         # Set bitwise password to same as root
@@ -133,4 +134,3 @@ echo ""
 
 echo "All changes completed! Restarting now..."
 reboot 0
-
