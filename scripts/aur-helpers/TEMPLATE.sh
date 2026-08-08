@@ -5,6 +5,8 @@
 #
 # Note: An SSH key-pair is required. This script only works if the key is password-less.
 
+DO_BUILD=true  # TODO: Do you want to ensure the package builds correctly?
+
 AUR_PKGNAME=""  # TODO: Add your package name here
 HEALTHCHECK_URL=""  # TODO: Add your healthchecks.io URL here
 
@@ -28,23 +30,46 @@ get_live_version() {
 }
 
 do_update() {
+
+    # Create temporary directory
     mkdir -p "$HOME/.tmp"
     tmpdir=$(mktemp -d --tmpdir="$HOME/.tmp")
     trap 'rm -rf "$tmpdir"' EXIT  # Ensures directory deletion after runtime
     cd "$tmpdir"
 
+    # Pull from AUR
     git clone "ssh://aur@aur.archlinux.org/$AUR_PKGNAME.git"
     cd "$AUR_PKGNAME"
 
-    sed -i "s/^pkgver=.*/pkgver=${LIVE_VERSION}/" PKGBUILD
+    sed -i "s/^pkgver=.*/pkgver=${LIVE_VERSION}/" PKGBUILD  # Increment version number
     updpkgsums
     makepkg --printsrcinfo > .SRCINFO
 
+    build_package
+
+    # Commit to AUR
     git add PKGBUILD .SRCINFO
     git commit -m "Update to version $LIVE_VERSION (automatic)"
     git push
 
     echo "Update complete!"
+}
+
+build_package() {
+    if [[ "$DO_BUILD" != true ]]; then
+        echo "Skipping build step."
+        return 0
+    fi
+
+    echo "Building package in clean chroot..."
+
+    if ! extra-x86_64-build; then
+        echo "Chroot build failed!"
+        send_healthcheck "fail"
+        exit 1
+    fi
+
+    echo "Chroot build succeeded."
 }
 
 send_healthcheck() {
