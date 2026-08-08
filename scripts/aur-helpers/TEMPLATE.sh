@@ -57,11 +57,11 @@ do_update() {
 
 build_package() {
     if [[ "$DO_BUILD" != true ]]; then
-        echo "Skipping build step."
+        echo "Skipping build step: DO_BUILD=false"
         return 0
     fi
 
-    echo "Building package in clean chroot..."
+    echo "Building $AUR_PKGNAME package in clean chroot..."
 
     if ! extra-x86_64-build; then
         echo "Chroot build failed!"
