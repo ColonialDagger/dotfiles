@@ -7,9 +7,8 @@ AUR_VERSION=""
 LIVE_VERSION=""
 
 get_aur_version() {
-    AUR_VERSION=$(curl -fsSL "https://aur.archlinux.org/packages/$AUR_PKGNAME" \
-        | grep "Package Details:" \
-        | grep -oP "(?<=$AUR_PKGNAME )[0-9.]+")
+    AUR_VERSION=$(curl -fsSL "https://aur.archlinux.org/rpc/?v=5&type=info&arg=kittenspaceagency-bin" \
+    | jq -r '.results[0].Version | split("-")[0]')
 }
 
 get_live_version() {
@@ -25,15 +24,27 @@ get_live_version() {
         | grep -oPo 'v\K[0-9.]+(?=\.tar\.gz)' \
         | sort -V \
         | tail -n 1)
+
+    # Early exit ensure valid file version retrieved
+    if ! [[ "$LIVE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "Invalid upstream version: $LIVE_VERSION"
+        send_healthcheck "fail"
+        exit 1
+    fi
 }
 
 do_update() {
-    mkdir -p "$HOME/.tmp"
-    tmpdir=$(mktemp -d --tmpdir="$HOME/.tmp")
+    tmpdir=$(mktemp -d --tmpdir="$HOME")
     trap 'rm -rf "$tmpdir"' EXIT
     cd "$tmpdir"
 
-    git clone "ssh://aur@aur.archlinux.org/$AUR_PKGNAME.git"
+    # Early exit if git clone fails
+    if ! git clone "ssh://aur@aur.archlinux.org/$AUR_PKGNAME.git"; then
+        echo "Git clone failed!"
+        send_healthcheck "fail"
+        exit 1
+    fi
+
     cd "$AUR_PKGNAME"
 
     sed -i "s/^pkgver=.*/pkgver=${LIVE_VERSION}/" PKGBUILD
@@ -84,4 +95,3 @@ main() {
 }
 
 main
-
