@@ -13,14 +13,18 @@ get_aur_version() {
 }
 
 get_live_version() {
+    local jsfile
+
     jsfile=$(curl -fsSL -H "Cache-Control: no-cache" https://ksa-archive.net \
-        | grep -oP 'src="/assets/\Kindex-[^"]+')
+        | grep -oP 'index-[^"]+\.js')
+
+    [[ -z "$jsfile" ]] && return 1
 
     LIVE_VERSION=$(curl -fsSL -H "Cache-Control: no-cache" "https://ksa-archive.net/assets/$jsfile" \
-        | grep -oP 'setup_ksa_v\K[0-9.]+(?=\.tar\.gz)' \
+        | grep -oPo '"linuxFile":"\K[^"]+' \
+        | grep -oPo 'v\K[0-9.]+(?=\.tar\.gz)' \
+        | sort -V \
         | tail -n 1)
-
-    echo $LIVE_VERSION
 }
 
 do_update() {
