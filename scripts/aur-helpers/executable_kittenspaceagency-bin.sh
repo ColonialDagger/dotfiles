@@ -12,19 +12,7 @@ get_aur_version() {
 }
 
 get_live_version() {
-    local jsfile
-
-    jsfile=$(curl -fsSL -H "Cache-Control: no-cache" https://ksa-archive.net \
-        | grep -oP 'index-[^"]+\.js')
-
-    [[ -z "$jsfile" ]] && return 1
-
-    LIVE_VERSION=$(curl -fsSL -H "Cache-Control: no-cache" "https://ksa-archive.net/assets/$jsfile" \
-        | grep -oPo '"linuxFile":"\K[^"]+' \
-        | grep -oPo 'v\K[0-9.]+(?=\.tar\.gz)' \
-        | sort -V \
-        | tail -n 1)
-
+    LIVE_VERSION=$(curl -fsSL https://raw.githubusercontent.com/H4ckerxx44/ksa-archive-net/refs/heads/main/public/builds.json | jq 'last.linuxFile | capture("(?<ver>\\d+\\.\\d+\\.\\d+\\.\\d+)").ver')
     # Validate version format
     if ! [[ "$LIVE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
         echo "Invalid upstream version: $LIVE_VERSION"
