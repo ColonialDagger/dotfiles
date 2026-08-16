@@ -7,7 +7,7 @@ AUR_VERSION=""
 LIVE_VERSION=""
 
 get_aur_version() {
-    AUR_VERSION=$(curl -fsSL "https://aur.archlinux.org/rpc/?v=5&type=info&arg=kittenspaceagency-bin" \
+    AUR_VERSION=$(curl -fsSL "https://aur.archlinux.org/rpc/?v=5&type=info&arg=$AUR_PKGNAME" \
     | jq -r '.results[0].Version | split("-")[0]')
 }
 
@@ -25,7 +25,7 @@ get_live_version() {
         | sort -V \
         | tail -n 1)
 
-    # Early exit ensure valid file version retrieved
+    # Validate version format
     if ! [[ "$LIVE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
         echo "Invalid upstream version: $LIVE_VERSION"
         send_healthcheck "fail"
@@ -38,7 +38,7 @@ do_update() {
     trap 'rm -rf "$tmpdir"' EXIT
     cd "$tmpdir"
 
-    # Early exit if git clone fails
+    # Validate proper git clone
     if ! git clone "ssh://aur@aur.archlinux.org/$AUR_PKGNAME.git"; then
         echo "Git clone failed!"
         send_healthcheck "fail"
