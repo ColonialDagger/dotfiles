@@ -6,7 +6,7 @@ BASHRC_URL="https://raw.githubusercontent.com/ColonialDagger/dotfiles/refs/heads
 
 # --- TODO ITEMS ---
 # Set vim as the default text editor
-# Create a notify healthcheck command?
+# Create a better cron entry for updating ssh keys and bashrc command
 
 # --- CONFIG FLAGS (no prompts) ---
 UPGRADE_PACKAGES=true
