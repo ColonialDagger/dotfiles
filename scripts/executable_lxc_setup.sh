@@ -4,6 +4,10 @@
 
 BASHRC_URL="https://raw.githubusercontent.com/ColonialDagger/dotfiles/refs/heads/master/executable_dot_bashrc"
 
+# --- TODO ITEMS ---
+# Set vim as the default text editor
+# Create a notify healthcheck command?
+
 # --- CONFIG FLAGS (no prompts) ---
 UPGRADE_PACKAGES=true
 INSTALL_EXTRA_PACKAGES=true
