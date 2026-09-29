@@ -97,6 +97,13 @@ if $INSTALL_ROOT_BASHRC; then
     (crontab -l 2>/dev/null; echo "*/15 * * * * curl -fsSL $BASHRC_URL > /root/.bashrc") | crontab -
 fi
 
+# --- UPDATE tldr CONFIG + CACHES ---
+tldr --seed-config
+tldr --update
+
+sudo tldr --seed-config
+sudo tldr --update
+
 # --- BITWISE USER SETUP ---
 if $SETUP_BITWISE_USER; then
     if ! id bitwise &>/dev/null; then
