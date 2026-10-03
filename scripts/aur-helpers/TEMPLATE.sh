@@ -5,6 +5,9 @@
 #
 # Note: An SSH key-pair is required. This script only works if the key is password-less.
 
+[ -f .env ] && source .env
+TMPDIR="${TMPDIR:-$HOME}"
+
 DO_BUILD=true  # TODO: Do you want to ensure the package builds correctly?
 
 AUR_PKGNAME=""  # TODO: Add your package name here
@@ -36,7 +39,7 @@ get_live_version() {
 }
 
 do_update() {
-    tmpdir=$(mktemp -d --tmpdir="$HOME")
+    tmpdir=$(mktemp -d --tmpdir="$TMPDIR")
     trap 'rm -rf "$tmpdir"' EXIT  # Ensures directory deletion after runtime
     cd "$tmpdir"
 
