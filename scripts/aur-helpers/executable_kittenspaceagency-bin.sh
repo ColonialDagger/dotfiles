@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+[ -f .env ] && source .env
+TMPDIR="${TMPDIR:-$HOME}"
+
 AUR_PKGNAME="kittenspaceagency-bin"
 HEALTHCHECK_URL="https://hc-ping.com/869beb5e-c8ce-4ac1-ad64-5c6c869fb44c"
 
@@ -22,7 +25,7 @@ get_live_version() {
 }
 
 do_update() {
-    tmpdir=$(mktemp -d --tmpdir="$HOME")
+    tmpdir=$(mktemp -d --tmpdir="$TMPDIR")
     trap 'rm -rf "$tmpdir"' EXIT
     cd "$tmpdir"
 
