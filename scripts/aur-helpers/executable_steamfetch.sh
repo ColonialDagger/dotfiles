@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+[ -f .env ] && source .env
+TMPDIR="${TMPDIR:-$HOME}"
+
 AUR_PKGNAME="steamfetch"
 HEALTHCHECK_URL="https://hc-ping.com/b2ab4196-8e30-44c7-99a8-c742ca840a32"
 
@@ -25,7 +28,7 @@ get_live_version() {
 }
 
 do_update() {
-    tmpdir=$(mktemp -d --tmpdir="$HOME")
+    tmpdir=$(mktemp -d --tmpdir="$TMPDIR")
     trap 'rm -rf "$tmpdir"' EXIT
     cd "$tmpdir"
 
