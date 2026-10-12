@@ -43,7 +43,7 @@
 # resize-overlay-duration = 4s 200ms
 
 window-width = 113
-window-height = 30
+window-height = 40
 
 theme = Breeze
 
