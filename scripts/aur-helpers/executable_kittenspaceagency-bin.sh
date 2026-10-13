@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 [ -f .env ] && source .env
-TMPDIR="${TMPDIR:-$HOME}"
+TMPDIR="/opt/aur-helpers-cache"
 
 AUR_PKGNAME="kittenspaceagency-bin"
 HEALTHCHECK_URL="https://hc-ping.com/869beb5e-c8ce-4ac1-ad64-5c6c869fb44c"
