@@ -53,7 +53,13 @@ do_update() {
     cd "$AUR_PKGNAME"
 
     sed -i "s/^pkgver=.*/pkgver=${LIVE_VERSION}/" PKGBUILD  # Increment version number
-    updpkgsums
+
+    if ! updpkgsums; then
+        echo "updpkgsums failed!"
+        send_healthcheck "fail"
+        exit 1
+    fi
+
     makepkg --printsrcinfo > .SRCINFO
 
     build_package
