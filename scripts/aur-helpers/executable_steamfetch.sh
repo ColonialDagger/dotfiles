@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 [ -f .env ] && source .env
-TMPDIR="${TMPDIR:-$HOME}"
+TMPDIR="/opt/aur-helpers-cache"
 
 AUR_PKGNAME="steamfetch"
 HEALTHCHECK_URL="https://hc-ping.com/b2ab4196-8e30-44c7-99a8-c742ca840a32"
