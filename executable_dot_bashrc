@@ -31,6 +31,9 @@ command -v yay > /dev/null 2>&1 && PACKAGE_MANAGER="yay"
 # Enable mangohud for all Vulkan games
 export MANGOHUD=1
 
+# Llama
+export LLAMA_CACHE="$HOME/.ai/models"
+
 ######################################################
 #       PS1 Management
 ######################################################
